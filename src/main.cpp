@@ -8,19 +8,12 @@
 #define RST     14     // GPIO14 -- SX1278's RESET
 #define DI0     26     // GPIO26 -- SX1278's IRQ(Interrupt Request)
 #define BUTTON_PIN 38  // Pin between PWR and RST 
+#define LED_PIN 4
 
 static const int RXPin = 34, TXPin = 12;
 static const uint32_t GPSBaud = 9600;
 
 /* Comms Protocol */
-#define PACKET_SPEED 1
-#define PACKET_HDOP 2
-#define PACKET_SATS 3
-
-// typedef union {
-//     uint32_t u32;
-//     float f32;
-// } payload;
 
 typedef struct {
   //int packet_id;
@@ -49,7 +42,7 @@ void setup() {
   
   Serial.begin(115200);
 
-  Serial2.begin(GPSBaud, SERIAL_8N1, RXPin, TXPin); // GPS Interface OLD: 34, 12
+  Serial2.begin(GPSBaud, SERIAL_8N1, RXPin, TXPin);
 
   // initialize SX1278 with default settings
   Serial.print(F("[SX1276] Initializing ... "));
