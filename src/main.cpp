@@ -55,6 +55,10 @@ void setup() {
     while (true) { delay(10); }
   }
 
+  radio.setBandwidth(250.0);
+  radio.setSpreadingFactor(6);
+  radio.setFrequency(915.0);
+
   radio.setPacketSentAction(transmissionComplete);
 
 }
@@ -72,7 +76,7 @@ void loop() {
     
   }
 
-  if(dataRead) {
+  if(dataRead == true) {
     gps_satellites = gps.satellites.value();
     gps_speed = gps.speed.mps();
     gps_hdop = gps.hdop.value();
@@ -88,8 +92,8 @@ void loop() {
     int transmissionResult = radio.transmit((uint8_t *) &packet_tx, sizeof(packet_tx));
 
     if (transmissionResult == RADIOLIB_ERR_TX_TIMEOUT) {
-    // timeout occurred while transmitting packet
-    Serial.println(F("timeout!"));
+      // timeout occurred while transmitting packet
+      Serial.println(F("timeout!"));
     }
 
   }
