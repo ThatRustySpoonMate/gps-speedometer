@@ -12,6 +12,24 @@
 static const int RXPin = 34, TXPin = 12;
 static const uint32_t GPSBaud = 9600;
 
+/* Comms Protocol */
+#define PACKET_SPEED 1
+#define PACKET_HDOP 2
+#define PACKET_SATS 3
+
+// typedef union {
+//     uint32_t u32;
+//     float f32;
+// } payload;
+
+typedef struct {
+  //int packet_id;
+
+  float speed;
+  float hdop;
+  uint32_t sats;
+
+} LoraMessage_t;
 
 /* Global variable defs */
 SX1276 radio = new Module(CS, DI0, RST);
@@ -54,8 +72,8 @@ void loop() {
 
   bool dataRead = false;
   while (Serial2.available() > 0){
-    Serial.write(Serial2.read());
-    //gps.encode(Serial2.read());
+    //Serial.write(Serial2.read());
+    gps.encode(Serial2.read());
 
     dataRead = true;
     
@@ -65,11 +83,30 @@ void loop() {
     gps_satellites = gps.satellites.value();
     gps_speed = gps.speed.mps();
     gps_hdop = gps.hdop.value();
-  }
-}
 
+    Serial.println("SATS: " + String(gps_satellites) + "\nSPEED: " + String(gps_speed) + "\nHDOP: " + String(gps_hdop) + "\n");
+
+    LoraMessage_t packet_tx;
+    packet_tx.sats = gps_satellites;
+    packet_tx.hdop = gps_hdop;
+    packet_tx.speed = gps_speed;
+
+    radioState = 1;
+    int transmissionResult = radio.transmit((uint8_t *) &packet_tx, sizeof(packet_tx));
+
+    if (transmissionResult == RADIOLIB_ERR_TX_TIMEOUT) {
+    // timeout occurred while transmitting packet
+    Serial.println(F("timeout!"));
+    }
+
+  }
+
+
+}
 
 
 void transmissionComplete() {
   radioState = 0;
+  
+  return;
 }
