@@ -78,7 +78,7 @@ void loop() {
 
   if(dataRead == true) {
     gps_satellites = gps.satellites.value();
-    gps_speed = gps.speed.mps();
+    gps_speed = gps.speed.kmph();
     gps_hdop = gps.hdop.value();
 
     Serial.println("SATS: " + String(gps_satellites) + "\nSPEED: " + String(gps_speed) + "\nHDOP: " + String(gps_hdop) + "\n");
@@ -97,6 +97,8 @@ void loop() {
     }
 
   }
+
+  delay(500);
 
 
 }
